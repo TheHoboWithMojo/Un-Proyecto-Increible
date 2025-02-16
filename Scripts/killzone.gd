@@ -1,12 +1,14 @@
 extends Area2D
-
-@onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
-
-func _on_body_entered(_body):
+	
+func _on_body_entered(body: Node) -> void:
 	print("you died!")
-		
-	audio_stream_player_2d.stream = load("res://Assets/sounds/hurt.wav")
-	audio_stream_player_2d.play()
-	await audio_stream_player_2d.finished
+	
+	body.get_node("CollisionShape2D").queue_free()
+	
+	Engine.time_scale = 0.5
+	
 	await get_tree().create_timer(0.5).timeout
+	
+	Engine.time_scale = 1
+	
 	get_tree().reload_current_scene()
