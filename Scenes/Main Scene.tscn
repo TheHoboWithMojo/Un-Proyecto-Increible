@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://qxdu1ydb5au4"]
+[gd_scene load_steps=16 format=4 uid="uid://qxdu1ydb5au4"]
 
 [ext_resource type="TileSet" uid="uid://bqnq7hxfliix3" path="res://Assets/sprites/wiptile.tres" id="1_8lmpj"]
 [ext_resource type="Script" path="res://Scripts/game_manager.gd" id="1_ukjd7"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://igbtf7uosx7" path="res://Scenes/coin.tscn" id="5_un6sa"]
 [ext_resource type="PackedScene" uid="uid://cy114j514m5ml" path="res://Scenes/platform.tscn" id="6_6ni1i"]
 [ext_resource type="FontFile" uid="uid://dugb1wrqfaqdg" path="res://Assets/fonts/PixelOperator8.ttf" id="8_oyvii"]
+[ext_resource type="PackedScene" uid="uid://b48qdftg7wni4" path="res://Scenes/npc.tscn" id="10_dpp8s"]
 
 [sub_resource type="GDScript" id="GDScript_1r2if"]
 
@@ -82,6 +83,7 @@ tile_map_data = PackedByteArray("AAD3/wQAAAAAAAsAAAD3/wMAAAAAAAsAAAD4/wMAAAAAAAs
 tile_set = ExtResource("2_efnqp")
 
 [node name="Player" parent="." instance=ExtResource("2_kdoav")]
+unique_name_in_owner = true
 z_index = 1
 position = Vector2(24, 1)
 
@@ -104,9 +106,6 @@ collision_mask = 2
 position = Vector2(0, 54)
 shape = SubResource("WorldBoundaryShape2D_qoicc")
 
-[node name="Coin" parent="." instance=ExtResource("5_un6sa")]
-position = Vector2(40, 1)
-
 [node name="Platform" parent="." instance=ExtResource("6_6ni1i")]
 position = Vector2(88, -19)
 
@@ -115,3 +114,14 @@ libraries = {
 "": SubResource("AnimationLibrary_xf2lg")
 }
 autoplay = "platform slide"
+
+[node name="Area2D" parent="." instance=ExtResource("10_dpp8s")]
+position = Vector2(98, -24)
+
+[node name="Coins" type="Node" parent="."]
+
+[node name="Coin" parent="Coins" instance=ExtResource("5_un6sa")]
+position = Vector2(40, 1)
+
+[node name="Coin2" parent="Coins" instance=ExtResource("5_un6sa")]
+position = Vector2(-8, -16)

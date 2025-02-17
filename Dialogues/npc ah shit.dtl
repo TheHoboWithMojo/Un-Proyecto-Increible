@@ -1,0 +1,8 @@
+join npc rightmost
+npc: yo wsp g
+- i like money | [if GlobalInfo.in_character_traits("Money Hungry") == true] [else="hide"]
+	npc: me too sexy
+- nm my guy
+	npc: niceeee vro
+- cooling
+	npc: can never be too cool my guy
