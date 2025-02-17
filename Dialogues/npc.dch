@@ -7,13 +7,13 @@
 "prefix": "",
 "sound_mood_default": "",
 "sound_moods": {},
-"style": "",
+"style": "default_style",
 "suffix": ""
 },
 "default_portrait": "Chillin",
 "description": "",
 "display_name": "npc",
-"mirror": true,
+"mirror": false,
 "nicknames": [""],
 "offset": Vector2(0, -300),
 "portraits": {

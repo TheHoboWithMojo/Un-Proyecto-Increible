@@ -1,5 +1,4 @@
 extends Node
-
 @onready var score_label: Label = $ScoreLabel
 
 #Keeps track of global variables and functions

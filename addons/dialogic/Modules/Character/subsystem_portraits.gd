@@ -479,13 +479,19 @@ func add_character(character: DialogicCharacter, container: DialogicNode_Portrai
 		return null
 
 ## Changes the portrait of a character. Only works with joined characters.
-func change_character_portrait(character: DialogicCharacter, portrait: String, fade_animation:="DEFAULT", fade_length := -1.0) -> void:
+func change_character_portrait(character: DialogicCharacter, portrait: String, fade_animation: String = "DEFAULT", fade_length: float = -1.0) -> void:
 	if not is_character_joined(character):
 		return
 
 	portrait = get_valid_portrait(character, portrait)
 
-	if dialogic.current_state_info.portraits[character.resource_path].portrait == portrait:
+	var portrait_entry = dialogic.current_state_info.portraits.get(character.resource_path, null)
+
+	if not portrait_entry or not 'node' in portrait_entry or not is_instance_valid(portrait_entry.node):
+		print("Warning: Portrait node for character %s is invalid or was freed." % character.resource_path)
+		return
+
+	if portrait_entry.portrait == portrait:
 		return
 
 	if fade_animation == "DEFAULT":
@@ -494,22 +500,36 @@ func change_character_portrait(character: DialogicCharacter, portrait: String, f
 
 	fade_animation = DialogicPortraitAnimationUtil.guess_animation(fade_animation, DialogicPortraitAnimationUtil.AnimationType.CROSSFADE)
 
-	var info := await _change_portrait(dialogic.current_state_info.portraits[character.resource_path].node, portrait, fade_animation, fade_length)
-	dialogic.current_state_info.portraits[character.resource_path].portrait = info.portrait
-	_change_portrait_mirror(
-			dialogic.current_state_info.portraits[character.resource_path].node,
-			dialogic.current_state_info.portraits[character.resource_path].get('custom_mirror', false)
+	# Ensure node is valid before calling _change_portrait
+	if is_instance_valid(portrait_entry.node):
+		var info := await _change_portrait(portrait_entry.node, portrait, fade_animation, fade_length)
+		portrait_entry.portrait = info.portrait
+
+		# Again, ensure the node is still valid before calling _change_portrait_mirror
+		if is_instance_valid(portrait_entry.node):
+			_change_portrait_mirror(
+				portrait_entry.node,
+				portrait_entry.get('custom_mirror', false)
 			)
-	character_portrait_changed.emit(info)
+
+		character_portrait_changed.emit(info)
+	else:
+		print("Warning: Node was freed before portrait change could complete.")
 
 
 ## Changes the mirror of the given character. Only works with joined characters
-func change_character_mirror(character:DialogicCharacter, mirrored:= false, force:= false) -> void:
-	if !is_character_joined(character):
+func change_character_mirror(character: DialogicCharacter, mirrored: bool = false, force: bool = false) -> void:
+	if not is_character_joined(character):
 		return
 
-	_change_portrait_mirror(dialogic.current_state_info.portraits[character.resource_path].node, mirrored, force)
-	dialogic.current_state_info.portraits[character.resource_path]['custom_mirror'] = mirrored
+	var portrait_entry = dialogic.current_state_info.portraits.get(character.resource_path, null)
+	
+	# Check if the portrait entry exists and if the node inside it is valid
+	if portrait_entry and 'node' in portrait_entry and is_instance_valid(portrait_entry.node):
+		_change_portrait_mirror(portrait_entry.node, mirrored, force)
+		portrait_entry['custom_mirror'] = mirrored
+	else:
+		print("Warning: Attempted to mirror a portrait that no longer exists.")
 
 
 ## Changes the z_index of a character. Only works with joined characters
